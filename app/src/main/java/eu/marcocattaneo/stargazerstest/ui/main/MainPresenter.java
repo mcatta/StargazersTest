@@ -1,44 +1,15 @@
 package eu.marcocattaneo.stargazerstest.ui.main;
 
-import android.view.View;
+import eu.marcocattaneo.stargazerstest.ui.general.BasePresenter;
 
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
+public interface MainPresenter extends BasePresenter<MainActivity> {
 
-import java.util.List;
+    void subscribe();
 
-import eu.marcocattaneo.stargazerstest.MainActivity;
-import eu.marcocattaneo.stargazerstest.data.StargazersTest;
+    void unsubscribe();
 
-public class MainPresenter implements MainPresenterInterface {
+    void refreshStagazers();
 
-    private MainActivity mainView;
+    void showInputDialog();
 
-    @Override
-    public void onTakeView(MainActivity view) {
-        this.mainView = view;
-    }
-
-    @Override
-    public void onDetach() {
-        this.mainView = null;
-    }
-
-    @Override
-    public void subscribe() {
-        if (!EventBus.getDefault().isRegistered(this))
-            EventBus.getDefault().register(this);
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onMessageEvent(List<StargazersTest> stargazers) {
-
-    }
-
-    @Override
-    public void unsubscribe() {
-        if (EventBus.getDefault().isRegistered(this))
-            EventBus.getDefault().unregister(this);
-    }
 }

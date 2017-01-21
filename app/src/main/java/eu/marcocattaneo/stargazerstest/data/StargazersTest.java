@@ -16,6 +16,8 @@ public class StargazersTest {
 
     private String type;
 
+    // Getter
+
     public int getId() {
         return id;
     }
