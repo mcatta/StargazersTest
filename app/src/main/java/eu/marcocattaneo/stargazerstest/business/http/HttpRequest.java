@@ -10,7 +10,10 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
+import com.android.volley.toolbox.BasicNetwork;
 import com.android.volley.toolbox.HttpHeaderParser;
+import com.android.volley.toolbox.HurlStack;
+import com.android.volley.toolbox.NoCache;
 import com.android.volley.toolbox.Volley;
 import com.google.gson.JsonSyntaxException;
 
@@ -25,8 +28,7 @@ public class HttpRequest {
     private RequestQueue mQueue;
 
     public HttpRequest(BaseActivity baseActivity) {
-        mQueue = Volley.newRequestQueue(baseActivity);
-
+        mQueue = new RequestQueue(new NoCache(), new BasicNetwork(new HurlStack()));
     }
 
     /**
@@ -50,7 +52,6 @@ public class HttpRequest {
         );
 
         // prevent http cache
-        stringRequest.setShouldCache(false);
         mQueue.add(stringRequest);
     }
 

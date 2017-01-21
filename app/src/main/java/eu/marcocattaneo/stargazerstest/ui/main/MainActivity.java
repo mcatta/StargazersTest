@@ -12,6 +12,7 @@ import android.view.MenuItem;
 
 import eu.marcocattaneo.stargazerstest.R;
 import eu.marcocattaneo.stargazerstest.business.helpers.GithubProfileHelper;
+import eu.marcocattaneo.stargazerstest.ui.adapter.StarGazerAdapter;
 import eu.marcocattaneo.stargazerstest.ui.general.BaseActivity;
 
 public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnRefreshListener {
@@ -41,6 +42,7 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
         mLayoutManager = new LinearLayoutManager(this);
         mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         stargazersList.setLayoutManager(mLayoutManager);
+        stargazersList.setAdapter(new StarGazerAdapter(null));
 
         // Swipe to refresh
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_to_refreh);

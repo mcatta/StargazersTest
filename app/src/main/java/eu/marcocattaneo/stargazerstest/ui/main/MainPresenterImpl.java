@@ -62,12 +62,13 @@ public class MainPresenterImpl implements MainPresenter {
         httpRequest.get(url, new RequestCallback() {
             @Override
             public void onResult(int statusCode, String result) {
-                parseResult(statusCode, result);
+                parseStargazerResult(statusCode, result);
             }
 
             @Override
             public void onError(VolleyError error) {
                 mainView.mSwipeRefreshLayout.setRefreshing(false);
+                error.printStackTrace();
                 showSnackbar(error.getMessage());
             }
         });
@@ -89,7 +90,12 @@ public class MainPresenterImpl implements MainPresenter {
 
     }
 
-    public void parseResult(int statusCode, @Nullable String res) {
+    /**
+     * Parse http result
+     * @param statusCode
+     * @param res
+     */
+    public void parseStargazerResult(int statusCode, @Nullable String res) {
 
         switch (statusCode) {
 
@@ -140,7 +146,7 @@ public class MainPresenterImpl implements MainPresenter {
     }
 
     public void showSnackbar(String message) {
-        Snackbar.make(mainView.mCoordinatorLayout, message, Snackbar.LENGTH_INDEFINITE).show();
+        Snackbar.make(mainView.mCoordinatorLayout, message, Snackbar.LENGTH_LONG).show();
     }
 
     public String getString(@StringRes int resid) {
