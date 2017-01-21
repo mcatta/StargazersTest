@@ -34,6 +34,22 @@ public class GithubProfileHelper {
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
     }
 
+    /**
+     * Reset profile
+     * @return
+     */
+    public boolean reset() {
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(PREF_USER, null);
+        editor.putString(PREF_REPO, null);
+
+        return editor.commit();
+    }
+
+    /**
+     * Return profile
+     * @return if NULL profile doesn't exist
+     */
     public @Nullable GithubProfile get() {
         String user = sharedPreferences.getString(PREF_USER, null);
         String repo = sharedPreferences.getString(PREF_REPO, null);
@@ -41,6 +57,12 @@ public class GithubProfileHelper {
         return user != null && repo != null ? new GithubProfile(user, repo) : null;
     }
 
+    /**
+     * Set new profile
+     * @param username (Github user)
+     * @param repoName (Github reponame)
+     * @return boolean
+     */
     public boolean set(@NonNull String username, @NonNull String repoName) {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(PREF_USER, username);

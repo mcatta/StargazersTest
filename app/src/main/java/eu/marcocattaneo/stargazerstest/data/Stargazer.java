@@ -1,6 +1,6 @@
 package eu.marcocattaneo.stargazerstest.data;
 
-public class StargazersTest {
+public class Stargazer {
 
     private int id;
 

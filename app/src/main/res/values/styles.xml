@@ -18,8 +18,4 @@
         <item name="android:textAllCaps">true</item>
     </style>
 
-    <style name="HeaderTitleStyle" parent="@android:style/TextAppearance">
-        <item name="android:textColor">@android:color/transparent</item>
-    </style>
-
 </resources>

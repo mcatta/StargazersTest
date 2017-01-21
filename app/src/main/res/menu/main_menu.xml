@@ -4,6 +4,6 @@
     <item
         android:id="@+id/changeRepo"
         android:icon="@drawable/ic_border_color_white_24dp"
-        app:showAsAction="ifRoom|always"
+        app:showAsAction="always"
         android:title="@string/change"/>
 </menu>

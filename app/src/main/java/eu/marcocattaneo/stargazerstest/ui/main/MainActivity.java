@@ -1,26 +1,27 @@
 package eu.marcocattaneo.stargazerstest.ui.main;
 
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import eu.marcocattaneo.stargazerstest.R;
+import eu.marcocattaneo.stargazerstest.business.helpers.GithubProfileHelper;
 import eu.marcocattaneo.stargazerstest.ui.general.BaseActivity;
-import eu.marcocattaneo.stargazerstest.ui.main.MainPresenter;
-import eu.marcocattaneo.stargazerstest.ui.main.MainPresenterImpl;
 
 public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnRefreshListener {
 
-    private RecyclerView stargazersList;
+    public CoordinatorLayout mCoordinatorLayout;
+
+    public RecyclerView stargazersList;
     private LinearLayoutManager mLayoutManager;
 
-    private SwipeRefreshLayout mSwipeRefreshLayout;
+    public SwipeRefreshLayout mSwipeRefreshLayout;
 
     private MainPresenter presenter;
 
@@ -28,6 +29,12 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        GithubProfileHelper.geInstance().set("mcollina", "mosca");
+
+        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
+
+        mCoordinatorLayout = (CoordinatorLayout) findViewById(R.id.activity_main);
 
         // inti List
         stargazersList = (RecyclerView) findViewById(R.id.stargazersList);
@@ -53,6 +60,9 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
         super.onResume();
 
         presenter.subscribe();
+
+        // Get data
+        presenter.refreshStagazers();
     }
 
     @Override
