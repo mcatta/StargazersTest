@@ -14,7 +14,6 @@ import com.android.volley.toolbox.BasicNetwork;
 import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.HurlStack;
 import com.android.volley.toolbox.NoCache;
-import com.android.volley.toolbox.Volley;
 import com.google.gson.JsonSyntaxException;
 
 import java.io.UnsupportedEncodingException;
@@ -27,7 +26,7 @@ public class HttpRequest {
 
     private RequestQueue mQueue;
 
-    public HttpRequest(BaseActivity baseActivity) {
+    public HttpRequest() {
         mQueue = new RequestQueue(new NoCache(), new BasicNetwork(new HurlStack()));
     }
 

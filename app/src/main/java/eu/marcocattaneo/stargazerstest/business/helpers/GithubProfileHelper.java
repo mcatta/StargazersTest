@@ -20,7 +20,7 @@ public class GithubProfileHelper {
         singleThon = new GithubProfileHelper(context);
     }
 
-    public static GithubProfileHelper geInstance() {
+    public static GithubProfileHelper getInstance() {
         return singleThon;
     }
 

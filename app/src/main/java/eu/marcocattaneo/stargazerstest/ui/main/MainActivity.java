@@ -11,7 +11,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import eu.marcocattaneo.stargazerstest.R;
-import eu.marcocattaneo.stargazerstest.business.helpers.GithubProfileHelper;
 import eu.marcocattaneo.stargazerstest.ui.adapter.StarGazerAdapter;
 import eu.marcocattaneo.stargazerstest.ui.general.BaseActivity;
 
@@ -24,14 +23,12 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
 
     public SwipeRefreshLayout mSwipeRefreshLayout;
 
-    private MainPresenter presenter;
+    public MainPresenter presenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        GithubProfileHelper.geInstance().set("mcollina", "mosca");
 
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
 

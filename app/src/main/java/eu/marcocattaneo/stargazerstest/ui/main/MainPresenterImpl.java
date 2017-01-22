@@ -56,9 +56,11 @@ public class MainPresenterImpl implements MainPresenter {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void fetchData(GithubProfile githubProfile) {
 
+        updateToolbar(githubProfile);
+
         String url = String.format("https://api.github.com/repos/%s/%s/stargazers", githubProfile.getUser(), githubProfile.getRepo());
 
-        HttpRequest httpRequest = new HttpRequest(mainView);
+        HttpRequest httpRequest = new HttpRequest();
         httpRequest.get(url, new RequestCallback() {
             @Override
             public void onResult(int statusCode, String result) {
@@ -67,18 +69,22 @@ public class MainPresenterImpl implements MainPresenter {
 
             @Override
             public void onError(VolleyError error) {
+                parseStargazerResult(error.networkResponse.statusCode, null);
                 mainView.mSwipeRefreshLayout.setRefreshing(false);
                 error.printStackTrace();
-                showSnackbar(error.getMessage());
             }
         });
         httpRequest.execute();
     }
 
+    private void updateToolbar(GithubProfile githubProfile) {
+        mainView.getSupportActionBar().setTitle(githubProfile.getUser() + "/" + githubProfile.getRepo());
+    }
+
     @Override
     public void refreshStagazers() {
 
-        GithubProfile githubProfile = GithubProfileHelper.geInstance().get();
+        GithubProfile githubProfile = GithubProfileHelper.getInstance().get();
 
         if (githubProfile == null) {
             showInputDialog();
@@ -95,7 +101,7 @@ public class MainPresenterImpl implements MainPresenter {
      * @param statusCode
      * @param res
      */
-    public void parseStargazerResult(int statusCode, @Nullable String res) {
+    public boolean parseStargazerResult(int statusCode, @Nullable String res) {
 
         switch (statusCode) {
 
@@ -109,7 +115,9 @@ public class MainPresenterImpl implements MainPresenter {
                     try {
                         List<Stargazer> stargazers = JSONMapper.fromJson(res, listType);
                         fillAdapter(stargazers);
+                        return true;
                     } catch (Exception e) {
+                        e.printStackTrace();
                         showSnackbar(getString(R.string.connection_error));
                     }
                 } else {
@@ -118,12 +126,19 @@ public class MainPresenterImpl implements MainPresenter {
 
                 break;
 
+            case 404:
+                showSnackbar(getString(R.string.repository_not_found));
+                showInputDialog();
+                break;
+
             case -1:
             default:
                 showSnackbar(getString(R.string.connection_error));
                 break;
 
         }
+
+        return false;
 
     }
 

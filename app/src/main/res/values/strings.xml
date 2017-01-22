@@ -2,4 +2,10 @@
     <string name="app_name">StargazersTest</string>
     <string name="change">Cambia</string>
     <string name="connection_error">Risposta non valida dal server</string>
+    <string name="hint_repo">Repository name</string>
+    <string name="hint_username">Github username</string>
+    <string name="dial_add">Aggiungi i dati</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Annulla</string>
+    <string name="repository_not_found">Repository non trovato</string>
 </resources>
