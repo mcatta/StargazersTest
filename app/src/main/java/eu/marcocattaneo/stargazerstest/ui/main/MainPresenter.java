@@ -1,18 +1,25 @@
 package eu.marcocattaneo.stargazerstest.ui.main;
 
+import java.util.List;
+
 import eu.marcocattaneo.stargazerstest.data.GithubProfile;
+import eu.marcocattaneo.stargazerstest.data.Stargazer;
 import eu.marcocattaneo.stargazerstest.ui.general.BasePresenter;
 
-public interface MainPresenter extends BasePresenter<MainActivity> {
+public interface MainPresenter {
 
     void subscribe();
 
     void unsubscribe();
 
-    void fetchData(GithubProfile githubProfile);
+    void enableRefresh(boolean enable);
 
-    void refreshStagazers();
+    void refreshAdapter(List<Stargazer> stargazers);
 
     void showInputDialog();
+
+    void updateToolbar(GithubProfile profile);
+
+    void showSnackbar(String message);
 
 }

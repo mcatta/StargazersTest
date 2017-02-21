@@ -1,5 +1,6 @@
 package eu.marcocattaneo.stargazerstest.ui.main;
 
+import android.content.Context;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.design.widget.Snackbar;
@@ -25,13 +26,22 @@ import eu.marcocattaneo.stargazerstest.data.GithubProfile;
 import eu.marcocattaneo.stargazerstest.data.Stargazer;
 import eu.marcocattaneo.stargazerstest.ui.adapter.StarGazerAdapter;
 import eu.marcocattaneo.stargazerstest.ui.dialog.ChangeGithubProfileDialogFragment;
+import eu.marcocattaneo.stargazerstest.ui.general.BasePresenter;
 
-public class MainPresenterImpl implements MainPresenter {
+public class MainPresenterImpl implements BasePresenter<MainPresenter> {
 
-    private MainActivity mainView;
+    private MainPresenter mainView;
+
+    private Context context;
+
+    private List<Stargazer> list;
+
+    public MainPresenterImpl(Context context) {
+        this.context = context;
+    }
 
     @Override
-    public void onTakeView(MainActivity view) {
+    public void onTakeView(MainPresenter view) {
         this.mainView = view;
     }
 
@@ -40,23 +50,9 @@ public class MainPresenterImpl implements MainPresenter {
         this.mainView = null;
     }
 
-    @Override
-    public void subscribe() {
-        if (!EventBus.getDefault().isRegistered(this))
-            EventBus.getDefault().register(this);
-    }
-
-    @Override
-    public void unsubscribe() {
-        if (EventBus.getDefault().isRegistered(this))
-            EventBus.getDefault().unregister(this);
-    }
-
-    @Override
-    @Subscribe(threadMode = ThreadMode.MAIN)
     public void fetchData(GithubProfile githubProfile) {
 
-        updateToolbar(githubProfile);
+        mainView.updateToolbar(githubProfile);
 
         String url = String.format("https://api.github.com/repos/%s/%s/stargazers", githubProfile.getUser(), githubProfile.getRepo());
 
@@ -70,29 +66,11 @@ public class MainPresenterImpl implements MainPresenter {
             @Override
             public void onError(VolleyError error) {
                 parseStargazerResult(error.networkResponse.statusCode, null);
-                mainView.mSwipeRefreshLayout.setRefreshing(false);
+                mainView.enableRefresh(false);
                 error.printStackTrace();
             }
         });
         httpRequest.execute();
-    }
-
-    private void updateToolbar(GithubProfile githubProfile) {
-        mainView.getSupportActionBar().setTitle(githubProfile.getUser() + "/" + githubProfile.getRepo());
-    }
-
-    @Override
-    public void refreshStagazers() {
-
-        GithubProfile githubProfile = GithubProfileHelper.getInstance().get();
-
-        if (githubProfile == null) {
-            showInputDialog();
-        } else {
-
-            mainView.mSwipeRefreshLayout.setRefreshing(true);
-            fetchData(githubProfile);
-        }
 
     }
 
@@ -103,6 +81,7 @@ public class MainPresenterImpl implements MainPresenter {
      */
     public boolean parseStargazerResult(int statusCode, @Nullable String res) {
 
+        list = null;
         switch (statusCode) {
 
             case 304:
@@ -114,26 +93,28 @@ public class MainPresenterImpl implements MainPresenter {
                     }.getType();
                     try {
                         List<Stargazer> stargazers = JSONMapper.fromJson(res, listType);
-                        fillAdapter(stargazers);
+                        list = stargazers;
+
+                        mainView.refreshAdapter(stargazers);
                         return true;
                     } catch (Exception e) {
                         e.printStackTrace();
-                        showSnackbar(getString(R.string.connection_error));
+                        mainView.showSnackbar(getString(R.string.connection_error));
                     }
                 } else {
-                    showSnackbar(getString(R.string.connection_error));
+                    mainView.showSnackbar(getString(R.string.connection_error));
                 }
 
                 break;
 
             case 404:
-                showSnackbar(getString(R.string.repository_not_found));
-                showInputDialog();
+                mainView.showSnackbar(getString(R.string.repository_not_found));
+                mainView.showInputDialog();
                 break;
 
             case -1:
             default:
-                showSnackbar(getString(R.string.connection_error));
+                mainView.showSnackbar(getString(R.string.connection_error));
                 break;
 
         }
@@ -142,30 +123,26 @@ public class MainPresenterImpl implements MainPresenter {
 
     }
 
-    /**
-     * Put data on list
-     * @param stargazers
-     */
-    private void fillAdapter(List<Stargazer> stargazers) {
-        mainView.stargazersList.setAdapter(new StarGazerAdapter(stargazers));
-        mainView.mSwipeRefreshLayout.setRefreshing(false);
+    public List<Stargazer> getList() {
+        return list;
     }
 
-    @Override
-    public void showInputDialog() {
-        if (mainView.getSupportFragmentManager().findFragmentByTag(ChangeGithubProfileDialogFragment.TAG) != null)
-            return;
+    public void refreshStagazers() {
 
-        ChangeGithubProfileDialogFragment fragment = ChangeGithubProfileDialogFragment.newInstance();
-        fragment.show(mainView.getSupportFragmentManager(), ChangeGithubProfileDialogFragment.TAG);
-    }
+        GithubProfile githubProfile = GithubProfileHelper.getInstance().get();
 
-    public void showSnackbar(String message) {
-        Snackbar.make(mainView.mCoordinatorLayout, message, Snackbar.LENGTH_LONG).show();
+        if (githubProfile == null) {
+            mainView.showInputDialog();
+        } else {
+
+            mainView.enableRefresh(true);
+            fetchData(githubProfile);
+        }
+
     }
 
     public String getString(@StringRes int resid) {
-        return mainView.getString(resid);
+        return context.getString(resid);
     }
 
 }
